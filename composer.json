@@ -1,0 +1,26 @@
+{
+    "name": "pingu/permissions-module",
+    "description": "",
+    "type" : "asgard-module",
+    "authors": [
+        {
+            "name": "Boris Blondin",
+            "email": "blondin.boris@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Permissions\\Providers\\PermissionsServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Permissions\\": ""
+        }
+    }
+}
