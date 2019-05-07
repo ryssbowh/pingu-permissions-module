@@ -1,5 +1,6 @@
 <?php
 
 return [
-    'name' => 'Permissions'
+    'name' => 'Permissions',
+    'cache-key' => 'permissions'
 ];

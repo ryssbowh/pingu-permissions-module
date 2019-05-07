@@ -6,7 +6,7 @@
     "active": 1,
     "order": 1,
     "providers": [
-        "Modules\\Permissions\\Providers\\PermissionsServiceProvider"
+        "Pingu\\Permissions\\Providers\\PermissionsServiceProvider"
     ],
     "aliases": {},
     "files": [],

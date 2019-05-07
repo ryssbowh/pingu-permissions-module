@@ -11,7 +11,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Modules\\Permissions\\Providers\\PermissionsServiceProvider"
+                "Pingu\\Permissions\\Providers\\PermissionsServiceProvider"
             ],
             "aliases": {
                 
@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Modules\\Permissions\\": ""
+            "Pingu\\Permissions\\": ""
         }
     }
 }

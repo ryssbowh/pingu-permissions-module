@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Permissions\Providers;
+namespace Pingu\Permissions\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -12,7 +12,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    protected $namespace = 'Modules\Permissions\Http\Controllers';
+    protected $namespace = 'Pingu\Permissions\Http\Controllers';
 
     /**
      * Called before routes are registered.

@@ -1,9 +1,10 @@
 <?php
 
-namespace Modules\Permissions\Providers;
+namespace Pingu\Permissions\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Support\ServiceProvider;
+use Pingu\Permissions\Console\{CacheReset,CreatePermission,CreateRole,Show};
 
 class PermissionsServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,7 @@ class PermissionsServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'permissions');
         $this->registerFactories();
+        $this->registerCommands();
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     }
 
@@ -78,6 +80,18 @@ class PermissionsServiceProvider extends ServiceProvider
     {
         if (! app()->environment('production')) {
             app(Factory::class)->load(__DIR__ . '/../Database/factories');
+        }
+    }
+
+    public function registerCommands()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CacheReset::class,
+                CreateRole::class,
+                CreatePermission::class,
+                Show::class,
+            ]);
         }
     }
 
