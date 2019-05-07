@@ -11,7 +11,7 @@ interface Role
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function permissions(): BelongsToMany;
+    public function permissions();
 
     /**
      * Find a role by its name and guard name.
@@ -45,7 +45,7 @@ interface Role
      *
      * @return \Pingu\Permissions\Contracts\Role
      */
-    public static function findOrCreate(string $name, $guardName): self;
+    public static function findOrCreate(string $name, $guardName = null);
 
     /**
      * Determine if the user may perform the given permission.

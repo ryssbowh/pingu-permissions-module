@@ -11,7 +11,7 @@ interface Permission
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function roles(): BelongsToMany;
+    public function roles();
 
     /**
      * Find a permission by its name.
