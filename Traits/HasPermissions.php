@@ -2,8 +2,15 @@
 
 namespace Pingu\Permissions\Traits;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
+use Permissions;
 use Pingu\Permissions\Contracts\Permission;
+use Pingu\Permissions\Entities\Permission as PermissionModel;
+use Pingu\Permissions\Exceptions\GuardDoesNotMatch;
 use Pingu\Permissions\Exceptions\PermissionDoesNotExist;
+use Pingu\Permissions\Guard;
+use Pingu\User\Entities\User;
 
 trait HasPermissions
 {
@@ -13,14 +20,14 @@ trait HasPermissions
      */
     public function permissions()
     {
-        return $this->hasMany(Permission::class);
+        return $this->belongsToMany(PermissionModel::class);
     }
 
     /**
      * Scope the model query to certain permissions only.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string|array|\Spatie\Permission\Contracts\Permission|\Illuminate\Support\Collection $permissions
+     * @param string|array|\Pingu\Permissions\Contracts\Permission|\Illuminate\Support\Collection $permissions
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -36,7 +43,7 @@ trait HasPermissions
             $query->whereHas('permissions', function ($query) use ($permissions) {
                 $query->where(function ($query) use ($permissions) {
                     foreach ($permissions as $permission) {
-                        $query->orWhere(config('permission.table_names.permissions').'.id', $permission->id);
+                        $query->orWhere('permissions.id', $permission->id);
                     }
                 });
             });
@@ -44,7 +51,7 @@ trait HasPermissions
                 $query->orWhereHas('roles', function ($query) use ($rolesWithPermissions) {
                     $query->where(function ($query) use ($rolesWithPermissions) {
                         foreach ($rolesWithPermissions as $role) {
-                            $query->orWhere(config('permission.table_names.roles').'.id', $role->id);
+                            $query->orWhere('roles.id', $role->id);
                         }
                     });
                 });
@@ -53,7 +60,7 @@ trait HasPermissions
     }
 
     /**
-     * @param string|array|\Spatie\Permission\Contracts\Permission|\Illuminate\Support\Collection $permissions
+     * @param string|array|\Pingu\Permissions\Contracts\Permission|\Illuminate\Support\Collection $permissions
      *
      * @return array
      */
@@ -70,7 +77,7 @@ trait HasPermissions
                 return $permission;
             }
 
-            return $this->getPermissionClass()->findByName($permission, $this->getDefaultGuardName());
+            return PermissionModel::findByName($permission, $this->getDefaultGuardName());
         }, $permissions);
     }
 
@@ -85,17 +92,15 @@ trait HasPermissions
      */
     public function hasPermissionTo($permission, $guardName = null): bool
     {
-        $permissionClass = $this->getPermissionClass();
-
         if (is_string($permission)) {
-            $permission = $permissionClass->findByName(
+            $permission = PermissionModel::findByName(
                 $permission,
                 $guardName ?? $this->getDefaultGuardName()
             );
         }
 
         if (is_int($permission)) {
-            $permission = $permissionClass->findById(
+            $permission = PermissionModel::findById(
                 $permission,
                 $guardName ?? $this->getDefaultGuardName()
             );
@@ -105,13 +110,13 @@ trait HasPermissions
             throw new PermissionDoesNotExist;
         }
 
-        return $this->hasDirectPermission($permission) || $this->hasPermissionViaRole($permission);
+        return $this->hasRole($permission->roles);
     }
 
     /**
      * An alias to hasPermissionTo(), but avoids throwing an exception.
      *
-     * @param string|int|\Spatie\Permission\Contracts\Permission $permission
+     * @param string|int|\Pingu\Permissions\Contracts\Permission $permission
      * @param string|null $guardName
      *
      * @return bool
@@ -295,20 +300,17 @@ trait HasPermissions
      */
     protected function getStoredPermission($permissions)
     {
-        $permissionClass = $this->getPermissionClass();
-
         if (is_numeric($permissions)) {
-            return $permissionClass->findById($permissions, $this->getDefaultGuardName());
+            return PermissionModel::findById($permissions, $this->getDefaultGuardName());
         }
 
         if (is_string($permissions)) {
-            return $permissionClass->findByName($permissions, $this->getDefaultGuardName());
+            return PermissionModel::findByName($permissions, $this->getDefaultGuardName());
         }
 
         if (is_array($permissions)) {
-            return $permissionClass
-                ->whereIn('name', $permissions)
-                ->whereIn('guard_name', $this->getGuardNames())
+            return Permission::whereIn('name', $permissions)
+                ->whereIn('guard', $this->getGuardNames())
                 ->get();
         }
 
@@ -322,8 +324,8 @@ trait HasPermissions
      */
     protected function ensureModelSharesGuard($roleOrPermission)
     {
-        if (! $this->getGuardNames()->contains($roleOrPermission->guard_name)) {
-            throw GuardDoesNotMatch::create($roleOrPermission->guard_name, $this->getGuardNames());
+        if (! $this->getGuardNames()->contains($roleOrPermission->guard)) {
+            throw GuardDoesNotMatch::create($roleOrPermission->guard, $this->getGuardNames());
         }
     }
 
@@ -342,6 +344,6 @@ trait HasPermissions
      */
     public function forgetCachedPermissions()
     {
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        Permissions::flushCache();
     }
 }

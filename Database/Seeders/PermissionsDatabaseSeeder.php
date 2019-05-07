@@ -2,8 +2,9 @@
 
 namespace Pingu\Permissions\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Seeder;
+use Pingu\Permissions\Entities\Permission;
 
 class PermissionsDatabaseSeeder extends Seeder
 {
@@ -14,8 +15,6 @@ class PermissionsDatabaseSeeder extends Seeder
      */
     public function run()
     {
-        Model::unguard();
-
-        // $this->call("OthersTableSeeder");
+        Permission::findOrCreate(['name' => 'manage permissions', 'section' => 'Permissions']);
     }
 }

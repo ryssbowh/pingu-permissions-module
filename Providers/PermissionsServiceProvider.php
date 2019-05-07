@@ -3,8 +3,12 @@
 namespace Pingu\Permissions\Providers;
 
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Pingu\Permissions\Console\{CacheReset,CreatePermission,CreateRole,Show};
+use Pingu\Permissions\Middleware\PermissionMiddleware;
+use Pingu\Permissions\Middleware\RoleMiddleware;
+use Pingu\Permissions\Permissions;
 
 class PermissionsServiceProvider extends ServiceProvider
 {
@@ -15,12 +19,17 @@ class PermissionsServiceProvider extends ServiceProvider
      */
     protected $defer = false;
 
+    protected $routeMiddlewares = [
+        'permission' => PermissionMiddleware::class,
+        'role' => RoleMiddleware::class
+    ];
+
     /**
      * Boot the application events.
      *
      * @return void
      */
-    public function boot()
+    public function boot(Permissions $permissions, Router $router)
     {
         $this->registerTranslations();
         $this->registerConfig();
@@ -28,6 +37,20 @@ class PermissionsServiceProvider extends ServiceProvider
         $this->registerFactories();
         $this->registerCommands();
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+        $this->registerRouteMiddlewares($router);
+
+        $permissions->registerPermissions();
+
+        $this->app->singleton('permissions.permissions', function ($app) use ($permissions) {
+            return $permissions;
+        });
+    }
+
+    public function registerRouteMiddlewares(Router $kernel)
+    {
+        foreach($this->routeMiddlewares as $name => $middleware){
+            $kernel->aliasMiddleware($name, $middleware);
+        }
     }
 
     /**

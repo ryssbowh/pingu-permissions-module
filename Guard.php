@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 class Guard
 {
     /**
-     * return collection of (guard_name) property if exist on class or object
+     * return collection of (guard) property if exist on class or object
      * otherwise will return collection of guards names that exists in config/auth.php.
      * @param $model
      * @return Collection
@@ -14,11 +14,11 @@ class Guard
     public static function getNames($model) : Collection
     {
         if (is_object($model)) {
-            $guardName = $model->guard_name ?? null;
+            $guardName = $model->guard ?? null;
         }
         if (! isset($guardName)) {
             $class = is_object($model) ? get_class($model) : $model;
-            $guardName = (new \ReflectionClass($class))->getDefaultProperties()['guard_name'] ?? null;
+            $guardName = (new \ReflectionClass($class))->getDefaultProperties()['guard'] ?? null;
         }
         if ($guardName) {
             return collect($guardName);

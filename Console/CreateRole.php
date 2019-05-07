@@ -8,7 +8,7 @@ use Pingu\Permissions\Contracts\Role;
 
 class CreateRole extends Command
 {
-    protected $signature = 'permission:create-role
+    protected $signature = 'permissions:create-role
         {name : The name of the role}
         {guard? : The name of the guard}
         {permissions? : A list of permissions to assign to the role, separated by | }';
@@ -17,9 +17,7 @@ class CreateRole extends Command
 
     public function handle()
     {
-        $roleClass = app(Role::class);
-
-        $role = $roleClass::findOrCreate($this->argument('name'), $this->argument('guard'));
+        $role = Role::findOrCreate($this->argument('name'), $this->argument('guard'));
 
         $role->givePermissionTo($this->makePermissions($this->argument('permissions')));
 
@@ -32,14 +30,12 @@ class CreateRole extends Command
             return;
         }
 
-        $permissionClass = app(Permission::class);
-
         $permissions = explode('|', $string);
 
         $models = [];
 
         foreach ($permissions as $permission) {
-            $models[] = $permissionClass::findOrCreate(trim($permission), $this->argument('guard'));
+            $models[] = Permission::findOrCreate(['name' => trim($permission), 'guard' => $this->argument('guard')]);
         }
 
         return collect($models);

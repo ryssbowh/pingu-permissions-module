@@ -2,6 +2,7 @@
 
 namespace Pingu\Permissions\Traits;
 
+use Illuminate\Database\Eloquent\Builder;
 use Pingu\User\Entities\Role;
 
 trait HasRoles
@@ -44,13 +45,13 @@ trait HasRoles
             $method = is_numeric($role) ? 'findById' : 'findByName';
             $guard = $guard ?: $this->getDefaultGuardName();
 
-            return $this->getRoleClass()->{$method}($role, $guard);
+            return Role::{$method}($role, $guard);
         }, $roles);
 
         return $query->whereHas('roles', function ($query) use ($roles) {
             $query->where(function ($query) use ($roles) {
                 foreach ($roles as $role) {
-                    $query->orWhere(config('permission.table_names.roles').'.id', $role->id);
+                    $query->orWhere('roles.id', $role->id);
                 }
             });
         });
@@ -221,14 +222,12 @@ trait HasRoles
 
     protected function getStoredRole($role): Role
     {
-        $roleClass = $this->getRoleClass();
-
         if (is_numeric($role)) {
-            return $roleClass->findById($role, $this->getDefaultGuardName());
+            return Role::findById($role, $this->getDefaultGuardName());
         }
 
         if (is_string($role)) {
-            return $roleClass->findByName($role, $this->getDefaultGuardName());
+            return Role::findByName($role, $this->getDefaultGuardName());
         }
 
         return $role;

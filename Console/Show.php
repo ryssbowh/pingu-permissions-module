@@ -23,7 +23,7 @@ class Show extends Command
         if ($guard) {
             $guards = Collection::make([$guard]);
         } else {
-            $guards = Permission::pluck('guard_name')->merge(Role::pluck('guard_name'))->unique();
+            $guards = Permission::pluck('guard')->merge(Role::pluck('guard'))->unique();
         }
 
         foreach ($guards as $guard) {
