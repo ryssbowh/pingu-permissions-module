@@ -5,7 +5,7 @@
 ## v1.0.1 First working version
 
 ## TODO
-- [ ] fix api permissisons (guard)
+- [ ] fix api permissions (guard)
 
 ## Permissions
 
