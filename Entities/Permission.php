@@ -3,7 +3,9 @@
 namespace Pingu\Permissions\Entities;
 
 use Permissions;
+use Pingu\Core\Contracts\AdminableModel as AdminableModelContract;
 use Pingu\Core\Entities\BaseModel;
+use Pingu\Core\Traits\AdminableModel;
 use Pingu\Permissions\Contracts\Permission as PermissionContract;
 use Pingu\Permissions\Exceptions\PermissionDoesNotExist;
 use Pingu\Permissions\Guard;
@@ -11,9 +13,9 @@ use Pingu\Permissions\Traits\HasRoles;
 use Pingu\User\Entities\Role;
 use Pingu\User\Entities\User;
 
-class Permission extends BaseModel implements PermissionContract
+class Permission extends BaseModel implements PermissionContract, AdminableModelContract
 {
-	use HasRoles;
+	use HasRoles, AdminableModel;
 
 	protected $fillable = ['name', 'guard', 'section'];
 
@@ -65,6 +67,7 @@ class Permission extends BaseModel implements PermissionContract
         }
         return $permission;
     }
+    
     /**
      * Find or create permission by its name (and optionally guardName).
      *
@@ -81,6 +84,38 @@ class Permission extends BaseModel implements PermissionContract
             Permissions::flushCache();
         }
         return $permission;
+    }
+
+    /**
+     * Give default guard name
+     * @param array $attributes
+     * @return bool
+     */
+    public function save(array $options = [])
+    {
+        $this->attributes['guard'] = $this->attributes['guard'] ?? Guard::getDefaultName(static::class);
+        return parent::save($options);
+    }
+
+    public static function adminEditUri()
+    {
+        return static::routeSlugs().'/edit';
+    }
+
+    public static function adminPatchUri()
+    {
+        return static::routeSlugs();
+    }
+
+    /**
+     * Check if the given role has this permission
+     * @param  Role   $role
+     * @return bool
+     */
+    public function roleHasPermission(Role $role)
+    {
+        if($role->id == 1) return true;
+        return $this->roles->contains($role);   
     }
 
 }

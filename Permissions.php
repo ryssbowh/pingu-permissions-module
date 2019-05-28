@@ -12,17 +12,20 @@ class Permissions
 	/** @var \Illuminate\Contracts\Auth\Access\Gate */
     protected $gate;
 
-    /** @var \Illuminate\Support\Collection */
-    protected $permissions;
-
 	public function __construct(Gate $gate)
     {
         $this->gate = $gate;
     }
 
+    protected function resolveCache()
+    {
+        return Cache::rememberForever(config('permissions.cache-key'), function() {
+            return Permission::get();
+        });
+    }
+
     public function flushCache()
     {
-        $this->permissions = null;
         Cache::forget(config('permissions.cache-key'));
     }
 
@@ -53,21 +56,18 @@ class Permissions
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getPermissions(array $params = [])
+    public function getPermissions(array $arguments = [])
     {
-        if ($this->permissions === null) {
-            $this->permissions = Cache::rememberForever(config('permissions.cache-key'), function() {
-                return Permission::get();
-            });
-        }
-
-        $permissions = clone $this->permissions;
-
-        foreach ($params as $attr => $value) {
+        $permissions = $this->resolveCache();
+        foreach($arguments as $attr => $value){
             $permissions = $permissions->where($attr, $value);
         }
-
         return $permissions;
+    }
+
+    public function getBySection()
+    {
+        return $this->resolveCache()->groupBy('section');
     }
 
 }
