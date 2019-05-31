@@ -7,8 +7,6 @@ use Pingu\User\Entities\Role;
 
 trait HasRoles
 {
-    use HasPermissions;
-
     /**
      * A model may have multiple roles.
      * @return  Illuminate\Database\Eloquent\Relations\BelongsToMany

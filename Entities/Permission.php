@@ -9,13 +9,12 @@ use Pingu\Core\Traits\AdminableModel;
 use Pingu\Permissions\Contracts\Permission as PermissionContract;
 use Pingu\Permissions\Exceptions\PermissionDoesNotExist;
 use Pingu\Permissions\Guard;
-use Pingu\Permissions\Traits\HasRoles;
 use Pingu\User\Entities\Role;
 use Pingu\User\Entities\User;
 
 class Permission extends BaseModel implements PermissionContract, AdminableModelContract
 {
-	use HasRoles, AdminableModel;
+	use AdminableModel;
 
 	protected $fillable = ['name', 'guard', 'section'];
 

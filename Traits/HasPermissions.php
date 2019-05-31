@@ -10,7 +10,6 @@ use Pingu\Permissions\Entities\Permission as PermissionModel;
 use Pingu\Permissions\Exceptions\GuardDoesNotMatch;
 use Pingu\Permissions\Exceptions\PermissionDoesNotExist;
 use Pingu\Permissions\Guard;
-use Pingu\User\Entities\User;
 
 trait HasPermissions
 {
@@ -112,7 +111,7 @@ trait HasPermissions
             throw new PermissionDoesNotExist;
         }
 
-        return $this->hasRole($permission->roles);
+        return $this->permissions->contains($permission);
     }
 
     /**
@@ -179,33 +178,6 @@ trait HasPermissions
     }
 
     /**
-     * Return all the permissions the model has via roles.
-     */
-    public function getPermissionsViaRoles(): Collection
-    {
-        return $this->load('roles', 'roles.permissions')
-            ->roles->flatMap(function ($role) {
-                return $role->permissions;
-            })->sort()->values();
-    }
-
-    /**
-     * Return all the permissions the model has, both directly and via roles.
-     *
-     * @throws \Exception
-     */
-    public function getAllPermissions(): Collection
-    {
-        $permissions = $this->permissions;
-
-        if ($this->roles) {
-            $permissions = $permissions->merge($this->getPermissionsViaRoles());
-        }
-
-        return $permissions->sort()->values();
-    }
-
-    /**
      * Grant the given permission(s) to a role.
      *
      * @param string|array|\Spatie\Permission\Contracts\Permission|\Illuminate\Support\Collection $permissions
@@ -214,6 +186,7 @@ trait HasPermissions
      */
     public function givePermissionTo($permissions)
     {
+        if(!is_array($permissions)) $permissions = [$permissions];
         $permissions = collect($permissions)
             ->flatten()
             ->map(function ($permission) {
@@ -232,13 +205,12 @@ trait HasPermissions
             ->map->id
             ->all();
 
-        $model = $this->getModel();
-
-        if ($model->exists) {
+        if ($this->exists) {
             $this->permissions()->sync($permissions, false);
-            $model->load('permissions');
+            $this->load('permissions');
         } else {
-            $class = \get_class($model);
+            $class = \get_class($this);
+            $model = $this;
 
             $class::saved(
                 function ($object) use ($permissions, $model) {

@@ -65,6 +65,18 @@ class Permissions
         return $permissions;
     }
 
+    /**
+     * Get one permission by name
+     *
+     * @param string $name
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getByName(string $name)
+    {
+        return $this->getPermissions(['name' => $name])->first();
+    }
+
     public function getBySection()
     {
         return $this->resolveCache()->groupBy('section');

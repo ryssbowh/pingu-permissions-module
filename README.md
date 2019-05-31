@@ -2,6 +2,10 @@
 
 ## TOTO
 
+## v1.1.2
+- removed HasPermission trait from HasRoles, replaced with HasPermissionsThroughRoles
+- permission middleware checks the Guest role permission if user is a guest
+
 ## v1.0.1 First working version
 
 ## TODO

@@ -13,11 +13,12 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class PermissionsController extends BaseController
 {
  	public function edit(Request $request)
- 	{
+ 	{	
+ 		$roles = Role::where('id', '!=', 1)->get();
  		return view('permissions::edit')->with([
  			'permissions' => Permissions::getBySection(),
  			'patchUri' => Permission::getAdminUri('patch', true),
- 			'roles' => Role::get()
+ 			'roles' => $roles
  		]);
  	}
 
