@@ -10,9 +10,11 @@ use Pingu\Permissions\Entities\Permission as PermissionModel;
 use Pingu\Permissions\Exceptions\GuardDoesNotMatch;
 use Pingu\Permissions\Exceptions\PermissionDoesNotExist;
 use Pingu\Permissions\Guard;
+use Pingu\Permissions\Traits\UsesGuards;
 
 trait HasPermissions
 {
+    use UsesGuards;
     /**
      * A model may have multiple direct permissions.
      * @return  Illuminate\Database\Eloquent\Relations\HasMany
@@ -225,7 +227,7 @@ trait HasPermissions
             );
         }
 
-        $this->forgetCachedPermissions();
+        Permissions::flushCache();
 
         return $this;
     }
@@ -255,7 +257,7 @@ trait HasPermissions
     {
         $this->permissions()->detach($this->getStoredPermission($permission));
 
-        $this->forgetCachedPermissions();
+        Permissions::flushCache();
 
         $this->load('permissions');
 
@@ -291,33 +293,4 @@ trait HasPermissions
         return $permissions;
     }
 
-    /**
-     * @param \Spatie\Permission\Contracts\Permission|\Spatie\Permission\Contracts\Role $roleOrPermission
-     *
-     * @throws \Spatie\Permission\Exceptions\GuardDoesNotMatch
-     */
-    protected function ensureModelSharesGuard($roleOrPermission)
-    {
-        if (! $this->getGuardNames()->contains($roleOrPermission->guard)) {
-            throw GuardDoesNotMatch::create($roleOrPermission->guard, $this->getGuardNames());
-        }
-    }
-
-    protected function getGuardNames(): Collection
-    {
-        return Guard::getNames($this);
-    }
-
-    protected function getDefaultGuardName(): string
-    {
-        return Guard::getDefaultName($this);
-    }
-
-    /**
-     * Forget the cached permissions.
-     */
-    public function forgetCachedPermissions()
-    {
-        Permissions::flushCache();
-    }
 }

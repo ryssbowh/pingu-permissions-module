@@ -3,10 +3,16 @@
 namespace Pingu\Permissions\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
+use Pingu\Permissions\Exceptions\GuardDoesNotMatch;
+use Pingu\Permissions\Guard;
+use Pingu\Permissions\Traits\UsesGuards;
 use Pingu\User\Entities\Role;
+use Permissions;
 
 trait HasRoles
 {
+    use UsesGuards;
     /**
      * A model may have multiple roles.
      * @return  Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -102,7 +108,7 @@ trait HasRoles
                 });
         }
 
-        $this->forgetCachedPermissions();
+        Permissions::flushCache();
 
         return $this;
     }
