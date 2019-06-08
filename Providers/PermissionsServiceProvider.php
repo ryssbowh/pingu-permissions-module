@@ -19,6 +19,8 @@ class PermissionsServiceProvider extends ServiceProvider
      */
     protected $defer = false;
 
+    protected $modelFolder = 'Entities';
+
     protected $routeMiddlewares = [
         'permission' => PermissionMiddleware::class,
         'role' => RoleMiddleware::class
@@ -31,6 +33,7 @@ class PermissionsServiceProvider extends ServiceProvider
      */
     public function boot(Permissions $permissions, Router $router)
     {
+        $this->registerModelSlugs();
         $this->registerTranslations();
         $this->registerConfig();
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'permissions');
@@ -44,6 +47,15 @@ class PermissionsServiceProvider extends ServiceProvider
         $this->app->singleton('permissions.permissions', function ($app) use ($permissions) {
             return $permissions;
         });
+
+        /**
+         * Grant all access to God role
+         */
+        \Gate::before(function ($user, $ability) {
+            if ($user->hasRole(1)) {
+                return true;
+            }
+        });
     }
 
     public function registerRouteMiddlewares(Router $kernel)
@@ -54,6 +66,14 @@ class PermissionsServiceProvider extends ServiceProvider
     }
 
     /**
+     * Registers all the slugs for this module's models
+     */
+    public function registerModelSlugs()
+    {
+        \ModelRoutes::registerSlugsFromPath(realpath(__DIR__.'/../'.$this->modelFolder));
+    }
+
+    /**
      * Register the service provider.
      *
      * @return void
@@ -61,6 +81,7 @@ class PermissionsServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(EventServiceProvider::class);
     }
 
     /**

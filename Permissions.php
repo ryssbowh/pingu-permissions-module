@@ -5,7 +5,11 @@ namespace Pingu\Permissions;
 use Cache;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Support\Str;
+use Pingu\Content\Entities\ContentType;
 use Pingu\Permissions\Entities\Permission;
+use Pingu\Permissions\Exceptions\PermissionDoesNotExist;
+use Pingu\User\Entities\Role;
 
 class Permissions
 {
@@ -15,6 +19,20 @@ class Permissions
 	public function __construct(Gate $gate)
     {
         $this->gate = $gate;
+    }
+
+    /**
+     * Get the entity on which to check permissions
+     * can be the user if logged in or the guest role
+     * @return User|Role
+     */
+    public function getPermissionableModel()
+    {
+        $model = \Auth::user();
+        if(!$model){
+            return Role::find(2);
+        }
+        return $model;
     }
 
     protected function resolveCache()
@@ -36,9 +54,7 @@ class Permissions
      */
     public function registerPermissions(): bool
     {
-        $this->gate->before(function (Authorizable $user, string $ability) {
-            if($user->id == 1) return true;
-
+        $this->gate->after(function (Authorizable $user, string $ability) {
             try {
                 if (method_exists($user, 'hasPermissionTo')) {
                     return $user->hasPermissionTo($ability) ?: null;
@@ -69,14 +85,38 @@ class Permissions
      * Get one permission by name
      *
      * @param string $name
-     *
-     * @return \Illuminate\Support\Collection
+     * @throws  PermissionDoesNotExist
+     * @return Permission
      */
-    public function getByName(string $name)
+    public function getByName(string $name, string $guard)
     {
-        return $this->getPermissions(['name' => $name])->first();
+        $perm = $this->getPermissions(['name' => $name, 'guard' => $guard])->first();
+        if(!$perm){
+            throw PermissionDoesNotExist::create($name, $guard);
+        }
+        return $perm;
     }
 
+    /**
+     * Get one permission by id
+     * 
+     * @param int $id
+     * @throws PermissionDoesNotExist
+     * @return Permission
+     */
+    public function getById(int $id)
+    {
+        $perm = $this->getPermissions(['id' => $id])->first();
+        if(!$perm){
+            throw PermissionDoesNotExist::withId($id);
+        }
+        return $perm;
+    }
+
+    /**
+     * Get permissions gropped by secton
+     * @return Collection
+     */
     public function getBySection()
     {
         return $this->resolveCache()->groupBy('section');

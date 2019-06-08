@@ -16,6 +16,7 @@ class InstallPermissions extends Migration
         Schema::create('permissions', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('helper')->nullable();
             $table->string('guard');
             $table->string('section');
             $table->timestamps();

@@ -19,8 +19,6 @@ interface Permission
      * @param string $name
      * @param string|null $guardName
      *
-     * @throws \Pingu\Permissions\Exceptions\PermissionDoesNotExist
-     *
      * @return Permission
      */
     public static function findByName(string $name, $guardName = null);
@@ -29,13 +27,10 @@ interface Permission
      * Find a permission by its id.
      *
      * @param int $id
-     * @param string|null $guardName
-     *
-     * @throws \Pingu\Permissions\Exceptions\PermissionDoesNotExist
      *
      * @return Permission
      */
-    public static function findById(int $id, $guardName = null);
+    public static function findById(int $id);
 
     /**
      * Find or Create a permission by its name and guard name.

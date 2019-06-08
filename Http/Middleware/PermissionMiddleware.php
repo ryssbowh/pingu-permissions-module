@@ -22,19 +22,11 @@ class PermissionMiddleware
             ? $permission
             : explode('|', $permission);
 
-        $permissions = array_map(function($name){
-            return \Permissions::getByName($name);
+        $model = \Permissions::getPermissionableModel();
+
+        $permissions = array_map(function($name) use ($model){
+            return \Permissions::getByName($name, $model->guard);
         }, $permissionsArray);
-
-
-        $model = \Auth::user();
-
-        if(!$model){
-            /**
-             * User is guest, check the permissions on the guest role
-             */
-            $model = Role::find(2);
-        }
         
         if(!$model->hasAllPermissions($permissions)){
             if($request->ajax()){

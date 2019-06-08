@@ -78,7 +78,7 @@ trait HasPermissions
                 return $permission;
             }
 
-            return PermissionModel::findByName($permission, $this->getDefaultGuardName());
+            return Permissions::getByName($permission, $this->getDefaultGuardName());
         }, $permissions);
     }
 
@@ -95,22 +95,12 @@ trait HasPermissions
     {
         if($this->id == 1) return true;
         
-        if (is_string($permission)) {
-            $permission = PermissionModel::findByName(
-                $permission,
-                $guardName ?? $this->getDefaultGuardName()
-            );
+        if(is_string($permission)){
+            $permission = Permissions::getByName($permission, $guardName ?? $this->getDefaultGuardName());
         }
 
-        if (is_int($permission)) {
-            $permission = PermissionModel::findById(
-                $permission,
-                $guardName ?? $this->getDefaultGuardName()
-            );
-        }
-
-        if (! $permission instanceof Permission) {
-            throw new PermissionDoesNotExist;
+        if(is_int($permission)){
+            $permission = Permissions::getById($permission, $guardName ?? $this->getDefaultGuardName());
         }
 
         return $this->permissions->contains($permission);
@@ -270,18 +260,18 @@ trait HasPermissions
     }
 
     /**
-     * @param string|array|\Spatie\Permission\Contracts\Permission|\Illuminate\Support\Collection $permissions
+     * @param string|array|Permission|\Illuminate\Support\Collection $permissions
      *
-     * @return \Spatie\Permission\Contracts\Permission|\Spatie\Permission\Contracts\Permission[]|\Illuminate\Support\Collection
+     * @return Permission|Permission[]|\Illuminate\Support\Collection
      */
     protected function getStoredPermission($permissions)
     {
         if (is_numeric($permissions)) {
-            return PermissionModel::findById($permissions, $this->getDefaultGuardName());
+            return Permissions::getById($permissions, $this->getDefaultGuardName());
         }
 
         if (is_string($permissions)) {
-            return PermissionModel::findByName($permissions, $this->getDefaultGuardName());
+            return Permissions::getByName($permissions, $this->getDefaultGuardName());
         }
 
         if (is_array($permissions)) {
