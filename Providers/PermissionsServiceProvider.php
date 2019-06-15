@@ -4,13 +4,13 @@ namespace Pingu\Permissions\Providers;
 
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Routing\Router;
-use Illuminate\Support\ServiceProvider;
+use Pingu\Core\Support\ModuleServiceProvider;
 use Pingu\Permissions\Console\{CacheReset,CreatePermission,CreateRole,Show};
 use Pingu\Permissions\Middleware\PermissionMiddleware;
 use Pingu\Permissions\Middleware\RoleMiddleware;
 use Pingu\Permissions\Permissions;
 
-class PermissionsServiceProvider extends ServiceProvider
+class PermissionsServiceProvider extends ModuleServiceProvider
 {
     /**
      * Indicates if loading of the provider is deferred.
@@ -33,7 +33,7 @@ class PermissionsServiceProvider extends ServiceProvider
      */
     public function boot(Permissions $permissions, Router $router)
     {
-        $this->registerModelSlugs();
+        $this->registerModelSlugs(__DIR__.'/../'.$this->modelFolder);
         $this->registerTranslations();
         $this->registerConfig();
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'permissions');
@@ -63,14 +63,6 @@ class PermissionsServiceProvider extends ServiceProvider
         foreach($this->routeMiddlewares as $name => $middleware){
             $kernel->aliasMiddleware($name, $middleware);
         }
-    }
-
-    /**
-     * Registers all the slugs for this module's models
-     */
-    public function registerModelSlugs()
-    {
-        \ModelRoutes::registerSlugsFromPath(realpath(__DIR__.'/../'.$this->modelFolder));
     }
 
     /**
