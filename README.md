@@ -1,5 +1,7 @@
 # Permissions
 
+## v1.2.0
+
 ## v1.1.3
 - adapted to Core Contracts renaming
 - added `EventServiceProvider`

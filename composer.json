@@ -22,11 +22,5 @@
         "psr-4": {
             "Pingu\\Permissions\\": ""
         }
-    },
-    "require":{
-        "pingu/core-module": "1.1.*",
-        "pingu/settings-module": "1.1.*",
-        "pingu/user-module": "1.1.*",
-        "pingu/menu-module": "1.1.*"
     }
 }
