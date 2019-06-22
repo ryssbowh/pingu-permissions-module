@@ -118,14 +118,12 @@ class PermissionsServiceProvider extends ModuleServiceProvider
 
     public function registerCommands()
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                CacheReset::class,
-                CreateRole::class,
-                CreatePermission::class,
-                Show::class,
-            ]);
-        }
+        $this->commands([
+            CacheReset::class,
+            CreateRole::class,
+            CreatePermission::class,
+            Show::class,
+        ]);
     }
 
     /**
