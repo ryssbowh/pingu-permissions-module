@@ -3,7 +3,7 @@
     "alias": "permissions",
     "description": "",
     "keywords": [],
-    "active": 0,
+    "active": 1,
     "order": 2,
     "providers": [
         "Pingu\\Permissions\\Providers\\PermissionsServiceProvider"
