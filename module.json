@@ -1,7 +1,7 @@
 {
     "name": "Permissions",
     "alias": "permissions",
-    "description": "",
+    "description": "Permissions sytem",
     "keywords": [],
     "active": 1,
     "order": 2,
@@ -9,7 +9,7 @@
         "Pingu\\Permissions\\Providers\\PermissionsServiceProvider"
     ],
     "aliases": {
-        "Permissions":"Pingu\\Permissions\\Facades\\Permissions"
+        "Permissions": "Pingu\\Permissions\\Facades\\Permissions"
     },
     "files": [],
     "requires": []
