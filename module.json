@@ -4,6 +4,7 @@
     "description": "Permissions sytem",
     "keywords": [],
     "order": 2,
+    "core": 1,
     "providers": [
         "Pingu\\Permissions\\Providers\\PermissionsServiceProvider"
     ],
