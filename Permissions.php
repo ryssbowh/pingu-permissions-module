@@ -92,7 +92,7 @@ class Permissions
     {
         $perm = $this->getPermissions(['name' => $name, 'guard' => $guard])->first();
         if(!$perm){
-            throw PermissionDoesNotExist::create($name, $guard);
+            throw PermissionDoesNotExist::name($name, $guard);
         }
         return $perm;
     }
