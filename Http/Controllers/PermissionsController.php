@@ -14,10 +14,11 @@ class PermissionsController extends BaseController
 {
  	public function edit(Request $request)
  	{	
+ 		dump(route_by_name('permissions.patch'));
  		$roles = Role::where('id', '!=', 1)->get();
  		return view('permissions::edit')->with([
  			'permissions' => Permissions::getBySection(),
- 			'patchUri' => Permission::getAdminUri('patch', true),
+ 			'patchUri' => route_by_name('permissions.patch'),
  			'roles' => $roles
  		]);
  	}

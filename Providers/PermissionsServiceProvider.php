@@ -39,7 +39,6 @@ class PermissionsServiceProvider extends ModuleServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'permissions');
         $this->registerFactories();
         $this->registerCommands();
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         $this->registerRouteMiddlewares($router);
 
         $permissions->registerPermissions();

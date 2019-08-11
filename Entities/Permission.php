@@ -3,10 +3,8 @@
 namespace Pingu\Permissions\Entities;
 
 use Permissions;
-use Pingu\Core\Contracts\Models\HasAdminRoutesContract;
 use Pingu\Core\Entities\BaseModel;
-use Pingu\Core\Traits\Models\HasAdminRoutes;
-use Pingu\Core\Traits\Models\HasRouteSlug;
+use Pingu\Core\Traits\HasCrudUris;
 use Pingu\Permissions\Contracts\Permission as PermissionContract;
 use Pingu\Permissions\Events\PermissionCacheChanged;
 use Pingu\Permissions\Exceptions\PermissionDoesNotExist;
@@ -14,10 +12,8 @@ use Pingu\Permissions\Guard;
 use Pingu\User\Entities\Role;
 use Pingu\User\Entities\User;
 
-class Permission extends BaseModel implements PermissionContract, HasAdminRoutesContract
+class Permission extends BaseModel implements PermissionContract
 {
-	use HasAdminRoutes, HasRouteSlug;
-
 	protected $fillable = ['name', 'guard', 'section'];
 
     protected $dispatchesEvents = [
