@@ -113,6 +113,8 @@ trait HasRoles
         return $this;
     }
 
+
+
     /**
      * Revoke the given role from the model.
      *
@@ -120,6 +122,8 @@ trait HasRoles
      */
     public function removeRole($role)
     {
+        if($this->id == 1) return;
+
         $this->roles()->detach($this->getStoredRole($role));
 
         $this->load('roles');
@@ -136,6 +140,8 @@ trait HasRoles
      */
     public function syncRoles(...$roles)
     {
+        if($this->id == 1) return;
+        
         $this->roles()->detach();
 
         return $this->assignRole($roles);
