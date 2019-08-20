@@ -13,7 +13,7 @@ use Pingu\User\Entities\Role;
 use Pingu\User\Entities\User;
 
 class Permission extends BaseModel implements PermissionContract
-{
+{   
 	protected $fillable = ['name', 'guard', 'section'];
 
     protected $dispatchesEvents = [
