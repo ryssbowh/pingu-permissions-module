@@ -19,8 +19,6 @@ class PermissionsServiceProvider extends ModuleServiceProvider
      */
     protected $defer = false;
 
-    protected $modelFolder = 'Entities';
-
     protected $routeMiddlewares = [
         'permission' => PermissionMiddleware::class,
         'role' => RoleMiddleware::class
@@ -33,7 +31,6 @@ class PermissionsServiceProvider extends ModuleServiceProvider
      */
     public function boot(Permissions $permissions, Router $router)
     {
-        $this->registerModelSlugs(__DIR__.'/../'.$this->modelFolder);
         $this->registerTranslations();
         $this->registerConfig();
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'permissions');
