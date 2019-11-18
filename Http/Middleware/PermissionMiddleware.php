@@ -17,19 +17,20 @@ class PermissionMiddleware
 
     public function handle($request, Closure $next, $permission)
     {
-
         $permissionsArray = is_array($permission)
             ? $permission
             : explode('|', $permission);
 
         $model = \Permissions::getPermissionableModel();
 
-        $permissions = array_map(function($name) use ($model){
-            return \Permissions::getByName($name, $model->guard);
-        }, $permissionsArray);
+        $permissions = array_map(
+            function ($name) use ($model) {
+                return \Permissions::getByName($name, $model->guard);
+            }, $permissionsArray
+        );
         
-        if(!$model->hasAllPermissions($permissions)){
-            if($request->ajax()){
+        if (!$model->hasAllPermissions($permissions)) {
+            if ($request->ajax()) {
                 throw UnauthorizedException::forPermissions($permissionsArray);
             }
             return $this->redirect($request);

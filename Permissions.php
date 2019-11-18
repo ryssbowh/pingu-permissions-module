@@ -2,7 +2,7 @@
 
 namespace Pingu\Permissions;
 
-use Cache;
+use Cache, Schema;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Support\Str;
@@ -13,26 +13,44 @@ use Pingu\User\Entities\Role;
 
 class Permissions
 {
-	/** @var \Illuminate\Contracts\Auth\Access\Gate */
+    /** @var \Illuminate\Contracts\Auth\Access\Gate */
     protected $gate;
+    protected $guestRole;
 
-	public function __construct(Gate $gate)
+    public function __construct(Gate $gate)
     {
         $this->gate = $gate;
+        if (Schema::hasTable('roles')) {
+            $this->guestRole = Role::find(config('user.guestRole'));
+        }
     }
 
     /**
      * Get the entity on which to check permissions
      * can be the user if logged in or the guest role
+     * 
      * @return User|Role
      */
     public function getPermissionableModel()
     {
         $model = \Auth::user();
-        if(!$model){
-            return Role::find(2);
+        if (!$model) {
+            return $this->guestRole;
         }
         return $model;
+    }
+
+    public function resolvePermissionable($permissionable)
+    {
+        if (is_null($permissionable)) {
+            return $this->getPermissionableModel();
+        }
+        return $permissionable;
+    }
+
+    public function guestRole()
+    {
+        return $this->guestRole;
     }
 
     protected function resolveCache()
@@ -101,13 +119,14 @@ class Permissions
      * Get one permission by id
      * 
      * @param int $id
+     * 
      * @throws PermissionDoesNotExist
      * @return Permission
      */
     public function getById(int $id)
     {
         $perm = $this->getPermissions(['id' => $id])->first();
-        if(!$perm){
+        if (!$perm) {
             throw PermissionDoesNotExist::withId($id);
         }
         return $perm;

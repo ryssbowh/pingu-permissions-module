@@ -8,7 +8,7 @@ use Pingu\Core\Support\ModuleServiceProvider;
 use Pingu\Permissions\Console\{CacheReset,CreatePermission,CreateRole,Show};
 use Pingu\Permissions\Middleware\PermissionMiddleware;
 use Pingu\Permissions\Middleware\RoleMiddleware;
-use Pingu\Permissions\Permissions;
+use Pingu\Permissions\Permissions as PermissionsClass;
 
 class PermissionsServiceProvider extends ModuleServiceProvider
 {
@@ -29,7 +29,7 @@ class PermissionsServiceProvider extends ModuleServiceProvider
      *
      * @return void
      */
-    public function boot(Permissions $permissions, Router $router)
+    public function boot(Router $router)
     {
         $this->registerTranslations();
         $this->registerConfig();
@@ -38,11 +38,7 @@ class PermissionsServiceProvider extends ModuleServiceProvider
         $this->registerCommands();
         $this->registerRouteMiddlewares($router);
 
-        $permissions->registerPermissions();
-
-        $this->app->singleton('permissions.permissions', function ($app) use ($permissions) {
-            return $permissions;
-        });
+        // \Permissions::registerPermissions();
 
         /**
          * Grant all access to God role
@@ -70,6 +66,7 @@ class PermissionsServiceProvider extends ModuleServiceProvider
     {
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(EventServiceProvider::class);
+        $this->app->singleton('permissions.permissions', PermissionsClass::class);
     }
 
     /**

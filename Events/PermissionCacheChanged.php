@@ -17,7 +17,6 @@ class PermissionCacheChanged
      */
     public function __construct($permission)
     {
-        \Log::debug('permission cache event fired');
         $this->permission = $permission;
     }
 

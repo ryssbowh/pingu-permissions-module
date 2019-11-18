@@ -14,24 +14,24 @@ use Pingu\User\Entities\User;
 
 class Permission extends BaseModel implements PermissionContract
 {   
-	protected $fillable = ['name', 'guard', 'section'];
+    protected $fillable = ['name', 'guard', 'section'];
 
     protected $dispatchesEvents = [
         'saved' => PermissionCacheChanged::class,
         'deleted' => PermissionCacheChanged::class
     ];
 
-	public function roles()
-	{
-		return $this->belongsToMany(Role::class);
-	}
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
 
-	public function users()
-	{
-		return $this->hasMany(User::class);
-	}
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 
-	/**
+    /**
      * Find a permission by its name (and optionally guardName).
      *
      * @param string $name
