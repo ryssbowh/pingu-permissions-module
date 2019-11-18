@@ -1,9 +1,6 @@
 # Permissions
 
-## TODO
-- [ ] make api permissions (guard)
-
-### Permissions
+## Permissions
 
 Based on [laravel permission](https://github.com/spatie/laravel-permission). Direct permissions are not in use here, in the sense that it's always the roles that define the permissions. Models cannot hold permissions, only Users and Roles.
 
@@ -15,5 +12,9 @@ To check permissions, retrieve first the model on which to check it with `Permis
 
 The user id 1 permission checking will always return true. this is registered on the gate in the service provider.
 
-### Events
+## Middlewares
+
+Two middlewares : `permission:name1|name2`, and `role:name1|name2`
+
+## Events
 - `PermissionCacheChanged` listened by `EmptyPermissionCache`

@@ -13,8 +13,16 @@ use Pingu\User\Entities\Role;
 
 class Permissions
 {
-    /** @var \Illuminate\Contracts\Auth\Access\Gate */
+    /**
+     * Laravel Gate
+     * @var Gate
+     */
     protected $gate;
+
+    /**
+     * Guest role
+     * @var Role
+     */
     protected $guestRole;
 
     public function __construct(Gate $gate)
@@ -48,18 +56,31 @@ class Permissions
         return $permissionable;
     }
 
+    /**
+     * Guest role getter
+     * 
+     * @return Role
+     */
     public function guestRole()
     {
         return $this->guestRole;
     }
 
+    /**
+     * Resolve permisisons cache
+     * 
+     * @return Collection
+     */
     protected function resolveCache()
     {
-        return Cache::rememberForever(config('permissions.cache-key'), function() {
+        return Cache::rememberForever(config('permissions.cache-key'), function () {
             return Permission::get();
         });
     }
 
+    /**
+     * Flush permissions cache
+     */
     public function flushCache()
     {
         Cache::forget(config('permissions.cache-key'));
@@ -70,18 +91,18 @@ class Permissions
      *
      * @return bool
      */
-    public function registerPermissions(): bool
-    {
-        $this->gate->after(function (Authorizable $user, string $ability) {
-            try {
-                if (method_exists($user, 'hasPermissionTo')) {
-                    return $user->hasPermissionTo($ability) ?: null;
-                }
-            } catch (PermissionDoesNotExist $e) {
-            }
-        });
-        return true;
-    }
+    // public function registerPermissions(): bool
+    // {
+    //     $this->gate->after(function (Authorizable $user, string $ability) {
+    //         try {
+    //             if (method_exists($user, 'hasPermissionTo')) {
+    //                 return $user->hasPermissionTo($ability) ?: null;
+    //             }
+    //         } catch (PermissionDoesNotExist $e) {
+    //         }
+    //     });
+    //     return true;
+    // }
 
     /**
      * Get the permissions based on the passed params.
@@ -93,7 +114,7 @@ class Permissions
     public function getPermissions(array $arguments = [])
     {
         $permissions = $this->resolveCache();
-        foreach($arguments as $attr => $value){
+        foreach ($arguments as $attr => $value) {
             $permissions = $permissions->where($attr, $value);
         }
         return $permissions;
@@ -103,7 +124,8 @@ class Permissions
      * Get one permission by name
      *
      * @param string $name
-     * @throws  PermissionDoesNotExist
+     * 
+     * @throws PermissionDoesNotExist
      * @return Permission
      */
     public function getByName(string $name, string $guard)
@@ -133,7 +155,8 @@ class Permissions
     }
 
     /**
-     * Get permissions gropped by secton
+     * Get permissions grouped by secton
+     * 
      * @return Collection
      */
     public function getBySection()

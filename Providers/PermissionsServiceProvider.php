@@ -38,8 +38,6 @@ class PermissionsServiceProvider extends ModuleServiceProvider
         $this->registerCommands();
         $this->registerRouteMiddlewares($router);
 
-        // \Permissions::registerPermissions();
-
         /**
          * Grant all access to God role
          */
