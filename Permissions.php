@@ -28,9 +28,6 @@ class Permissions
     public function __construct(Gate $gate)
     {
         $this->gate = $gate;
-        if (Schema::hasTable('roles')) {
-            $this->guestRole = Role::find(config('user.guestRole'));
-        }
     }
 
     /**
@@ -43,7 +40,7 @@ class Permissions
     {
         $model = \Auth::user();
         if (!$model) {
-            return $this->guestRole;
+            return config('user.guestRole');
         }
         return $model;
     }
@@ -63,7 +60,7 @@ class Permissions
      */
     public function guestRole()
     {
-        return $this->guestRole;
+        return config('user.guestRole');
     }
 
     /**

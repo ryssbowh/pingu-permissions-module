@@ -25,7 +25,6 @@ class EmptyPermissionCache
      */
     public function handle($event)
     {
-        \Log::debug('emptu cache perm');
         \Permissions::flushCache();
     }
 }
