@@ -164,4 +164,9 @@ class Permissions
         $perms = $this->resolveRolesCache()[$role->id] ?? [];
         return in_array($perm->id, $perms);
     }
+
+    public function all()
+    {
+        return $this->resolveModelCache();
+    }
 }
