@@ -70,7 +70,6 @@ class Permission extends BaseModel implements PermissionContract
         $permission = static::where(['name' => $attributes['name'], 'guard' => $attributes['guard']])->first();
         if (!$permission) {
             $permission = static::create($attributes);
-            Permissions::flushCache();
         }
         return $permission;
     }
@@ -86,16 +85,6 @@ class Permission extends BaseModel implements PermissionContract
         return parent::save($options);
     }
 
-    public static function adminEditUri()
-    {
-        return static::routeSlugs().'/edit';
-    }
-
-    public static function adminPatchUri()
-    {
-        return static::routeSlugs();
-    }
-
     /**
      * Check if the given role has this permission
      * @param  Role   $role
@@ -104,7 +93,7 @@ class Permission extends BaseModel implements PermissionContract
     public function roleHasPermission(Role $role)
     {
         if($role->id == 1) return true;
-        return $this->roles->contains($role);   
+        return Permissions::roleHasPermission($role, $this);
     }
 
 }

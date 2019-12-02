@@ -103,7 +103,7 @@ trait HasPermissions
             $permission = Permissions::getById($permission, $guardName ?? $this->getDefaultGuardName());
         }
 
-        return $this->permissions->contains($permission);
+        return Permissions::roleHasPermission($this, $permission);
     }
 
     /**

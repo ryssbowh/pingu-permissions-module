@@ -14,22 +14,13 @@ use Pingu\User\Entities\Role;
 class Permissions
 {
     /**
-     * Laravel Gate
-     * @var Gate
-     */
-    protected $gate;
-
-    /**
      * Guest role
      * @var Role
      */
     protected $guestRole;
 
-    public function __construct(Gate $gate)
-    {
-        $this->gate = $gate;
-    }
-
+    protected $modelCacheKey = 'permissions.models';
+    protected $rolesCacheKey = 'permissions.roles';
     /**
      * Get the entity on which to check permissions
      * can be the user if logged in or the guest role
@@ -68,9 +59,9 @@ class Permissions
      * 
      * @return Collection
      */
-    protected function resolveCache()
+    protected function resolveModelCache()
     {
-        return Cache::rememberForever(config('permissions.cache-key'), function () {
+        return Cache::rememberForever($this->modelCacheKey, function () {
             return Permission::get();
         });
     }
@@ -80,26 +71,9 @@ class Permissions
      */
     public function flushCache()
     {
-        Cache::forget(config('permissions.cache-key'));
+        Cache::forget($this->modelCacheKey);
+        Cache::forget($this->rolesCacheKey);
     }
-
-    /**
-     * Register the permission check method on the gate.
-     *
-     * @return bool
-     */
-    // public function registerPermissions(): bool
-    // {
-    //     $this->gate->after(function (Authorizable $user, string $ability) {
-    //         try {
-    //             if (method_exists($user, 'hasPermissionTo')) {
-    //                 return $user->hasPermissionTo($ability) ?: null;
-    //             }
-    //         } catch (PermissionDoesNotExist $e) {
-    //         }
-    //     });
-    //     return true;
-    // }
 
     /**
      * Get the permissions based on the passed params.
@@ -110,7 +84,7 @@ class Permissions
      */
     public function getPermissions(array $arguments = [])
     {
-        $permissions = $this->resolveCache();
+        $permissions = $this->resolveModelCache();
         foreach ($arguments as $attr => $value) {
             $permissions = $permissions->where($attr, $value);
         }
@@ -158,7 +132,36 @@ class Permissions
      */
     public function getBySection()
     {
-        return $this->resolveCache()->groupBy('section');
+        return $this->resolveModelCache()->groupBy('section');
     }
 
+    /**
+     * Builds roles permissions in an array for faster access
+     * 
+     * @return array
+     */
+    protected function resolveRolesCache()
+    {
+        return Cache::rememberForever($this->rolesCacheKey, function () {
+            $out = [];
+            foreach (Role::all() as $role) {
+                $out[$role->id] = $role->permissions->pluck('id')->toArray();
+            }
+            return $out;
+        });
+    }
+
+    /**
+     * @param  Role       $role
+     * @param  Permission $perm
+     * @return bool
+     */
+    public function roleHasPermission(Role $role, Permission $perm)
+    {
+        if ($role->id == 1) {
+            return true;
+        }
+        $perms = $this->resolveRolesCache()[$role->id] ?? [];
+        return in_array($perm->id, $perms);
+    }
 }
