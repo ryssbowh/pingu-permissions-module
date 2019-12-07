@@ -37,6 +37,7 @@ class PermissionsServiceProvider extends ModuleServiceProvider
         $this->registerFactories();
         $this->registerCommands();
         $this->registerRouteMiddlewares($router);
+        $this->addBladeDirectives();
 
         /**
          * Grant all access to God role
@@ -65,6 +66,20 @@ class PermissionsServiceProvider extends ModuleServiceProvider
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(EventServiceProvider::class);
         $this->app->singleton('permissions.permissions', PermissionsClass::class);
+    }
+
+    protected function addBladeDirectives()
+    {
+        \Blade::directive('ifperm', function ($expression) {
+
+            $code = "<?php if(\Permissions::getPermissionableModel()->hasPermissionTo($expression)): ?>";
+
+            return $code;
+        });
+
+        \Blade::directive('endifperm', function () {
+            return '<?php endif ?>';
+        });
     }
 
     /**
