@@ -13,10 +13,10 @@ use Pingu\Permissions\Entities\Permission;
 |
 */
 
-Route::get('permissions/edit', ['uses' => 'PermissionsController@edit'])
+Route::get('permissions', ['uses' => 'PermissionsController@edit'])
     ->name('permissions.admin.edit')
-    ->middleware('can:edit permissions');
+    ->middleware('permission:view permissions');
 
-Route::patch('permissions/edit', ['uses' => 'PermissionsController@patch'])
+Route::patch('permissions', ['uses' => 'PermissionsController@patch'])
     ->name('permissions.patch')
-    ->middleware('can:edit permissions');
+    ->middleware('permission:edit permissions');

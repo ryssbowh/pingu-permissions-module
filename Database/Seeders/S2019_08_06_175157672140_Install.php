@@ -16,19 +16,18 @@ class S2019_08_06_175157672140_Install extends MigratableSeeder
      */
     public function run(): void
     {
-        $perm = Permission::create(['name' => 'edit permissions', 'section' => 'Permissions', 'helper' => 'Warning : do not give this permissions to untrusted roles']);
+        $edit = Permission::create(['name' => 'edit permissions', 'section' => 'Permissions', 'helper' => 'Warning : do not give this permissions to untrusted roles']);
+        $view = Permission::create(['name' => 'view permissions', 'section' => 'Permissions']);
         $admin = Role::find(4);
-        $admin->givePermissionTo($perm);
-        $menu = Menu::findByMachineName('admin-menu');
-        $users = MenuItem::findByMachineName('admin-menu.users');
+        $admin->givePermissionTo([$view, $edit]);
         $item = MenuItem::create(
             [
             'name' => 'Permissions',
             'active' => true,
             'url' => 'permissions.admin.edit',
             'deletable' => 0,
-            'permission_id' => $perm->id,
-            ], $menu, $users
+            'permission_id' => $view->id,
+            ], 'admin-menu', 'admin-menu.users'
         );
     }
 

@@ -7,19 +7,21 @@ use Illuminate\Http\Response;
 use Permissions, Notify;
 use Pingu\Core\Http\Controllers\BaseController;
 use Pingu\Permissions\Entities\Permission;
+use Pingu\Permissions\Events\PermissionCacheChanged;
 use Pingu\User\Entities\Role;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class PermissionsController extends BaseController
 {
     public function edit(Request $request)
-    {    
+    {
         $roles = Role::where('id', '!=', 1)->get();
         return view('permissions::edit')->with(
             [
             'permissions' => Permissions::getBySection(),
             'patchUri' => route_by_name('permissions.patch')->uri,
-            'roles' => $roles
+            'roles' => $roles,
+            'canEdit' => \Auth::user()->hasPermissionTo('edit permissions')
             ]
         );
     }
@@ -41,6 +43,7 @@ class PermissionsController extends BaseController
             }
             $role->syncPermissions(...$rolePerms);
         }
+        event(new PermissionCacheChanged);
         Notify::success("Permissions have been updated");
         return back();
     }

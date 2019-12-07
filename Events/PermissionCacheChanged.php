@@ -15,7 +15,7 @@ class PermissionCacheChanged
      *
      * @return void
      */
-    public function __construct($permission)
+    public function __construct($permission = null)
     {
         $this->permission = $permission;
     }
