@@ -15,6 +15,7 @@ class Permissions
 {
     /**
      * Guest role
+     *
      * @var Role
      */
     protected $guestRole;
@@ -61,9 +62,11 @@ class Permissions
      */
     protected function resolveModelCache()
     {
-        return Cache::rememberForever($this->modelCacheKey, function () {
-            return Permission::get();
-        });
+        return Cache::rememberForever(
+            $this->modelCacheKey, function () {
+                return Permission::get();
+            }
+        );
     }
 
     /**
@@ -102,7 +105,7 @@ class Permissions
     public function getByName(string $name, string $guard)
     {
         $perm = $this->getPermissions(['name' => $name, 'guard' => $guard])->first();
-        if(!$perm){
+        if(!$perm) {
             throw PermissionDoesNotExist::name($name, $guard);
         }
         return $perm;
@@ -142,13 +145,15 @@ class Permissions
      */
     protected function resolveRolesCache()
     {
-        return Cache::rememberForever($this->rolesCacheKey, function () {
-            $out = [];
-            foreach (Role::all() as $role) {
-                $out[$role->id] = $role->permissions->pluck('id')->toArray();
+        return Cache::rememberForever(
+            $this->rolesCacheKey, function () {
+                $out = [];
+                foreach (Role::all() as $role) {
+                    $out[$role->id] = $role->permissions->pluck('id')->toArray();
+                }
+                return $out;
             }
-            return $out;
-        });
+        );
     }
 
     /**

@@ -42,11 +42,13 @@ class PermissionsServiceProvider extends ModuleServiceProvider
         /**
          * Grant all access to God role
          */
-        \Gate::before(function ($user, $ability) {
-            if ($user->hasRole(1)) {
-                return true;
+        \Gate::before(
+            function ($user, $ability) {
+                if ($user->hasRole(1)) {
+                    return true;
+                }
             }
-        });
+        );
     }
 
     public function registerRouteMiddlewares(Router $kernel)
@@ -70,16 +72,20 @@ class PermissionsServiceProvider extends ModuleServiceProvider
 
     protected function addBladeDirectives()
     {
-        \Blade::directive('ifperm', function ($expression) {
+        \Blade::directive(
+            'ifperm', function ($expression) {
 
-            $code = "<?php if(\Permissions::getPermissionableModel()->hasPermissionTo($expression)): ?>";
+                $code = "<?php if(\Permissions::getPermissionableModel()->hasPermissionTo($expression)): ?>";
 
-            return $code;
-        });
+                return $code;
+            }
+        );
 
-        \Blade::directive('endifperm', function () {
-            return '<?php endif ?>';
-        });
+        \Blade::directive(
+            'endifperm', function () {
+                return '<?php endif ?>';
+            }
+        );
     }
 
     /**
@@ -124,12 +130,14 @@ class PermissionsServiceProvider extends ModuleServiceProvider
 
     public function registerCommands()
     {
-        $this->commands([
+        $this->commands(
+            [
             CacheReset::class,
             CreateRole::class,
             CreatePermission::class,
             Show::class,
-        ]);
+            ]
+        );
     }
 
     /**

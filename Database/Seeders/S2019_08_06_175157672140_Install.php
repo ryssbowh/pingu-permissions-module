@@ -21,13 +21,15 @@ class S2019_08_06_175157672140_Install extends MigratableSeeder
         $admin->givePermissionTo($perm);
         $menu = Menu::findByMachineName('admin-menu');
         $users = MenuItem::findByMachineName('admin-menu.users');
-        $item = MenuItem::create([
+        $item = MenuItem::create(
+            [
             'name' => 'Permissions',
             'active' => true,
             'url' => 'permissions.admin.edit',
             'deletable' => 0,
             'permission_id' => $perm->id,
-        ], $menu, $users);
+            ], $menu, $users
+        );
     }
 
     /**

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 interface Role
 {
-	/**
+    /**
      * A role may be given various permissions.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -16,7 +16,7 @@ interface Role
     /**
      * Find a role by its name and guard name.
      *
-     * @param string $name
+     * @param string      $name
      * @param string|null $guardName
      *
      * @return \Pingu\Permissions\Contracts\Role
@@ -28,7 +28,7 @@ interface Role
     /**
      * Find a role by its id and guard name.
      *
-     * @param int $id
+     * @param int         $id
      * @param string|null $guardName
      *
      * @return \Pingu\Permissions\Contracts\Role
@@ -40,7 +40,7 @@ interface Role
     /**
      * Find or create a role by its name and guard name.
      *
-     * @param string $name
+     * @param string      $name
      * @param string|null $guardName
      *
      * @return \Pingu\Permissions\Contracts\Role

@@ -29,17 +29,23 @@ class Show extends Command
         foreach ($guards as $guard) {
             $this->info("Guard: $guard");
 
-            $roles = Role::whereGuardName($guard)->orderBy('name')->get()->mapWithKeys(function (Role $role) {
-                return [$role->name => $role->permissions->pluck('name')];
-            });
+            $roles = Role::whereGuardName($guard)->orderBy('name')->get()->mapWithKeys(
+                function (Role $role) {
+                    return [$role->name => $role->permissions->pluck('name')];
+                }
+            );
 
             $permissions = Permission::whereGuardName($guard)->orderBy('name')->pluck('name');
 
-            $body = $permissions->map(function ($permission) use ($roles) {
-                return $roles->map(function (Collection $role_permissions) use ($permission) {
-                    return $role_permissions->contains($permission) ? ' ✔' : ' ·';
-                })->prepend($permission);
-            });
+            $body = $permissions->map(
+                function ($permission) use ($roles) {
+                    return $roles->map(
+                        function (Collection $role_permissions) use ($permission) {
+                            return $role_permissions->contains($permission) ? ' ✔' : ' ·';
+                        }
+                    )->prepend($permission);
+                }
+            );
 
             $this->table(
                 $roles->keys()->prepend('')->toArray(),

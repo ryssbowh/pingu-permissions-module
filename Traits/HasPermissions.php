@@ -17,7 +17,8 @@ trait HasPermissions
     use UsesGuards;
     /**
      * A model may have multiple direct permissions.
-     * @return  Illuminate\Database\Eloquent\Relations\HasMany
+     *
+     * @return Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function permissions()
     {
@@ -27,7 +28,7 @@ trait HasPermissions
     /**
      * Scope the model query to certain permissions only.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder                                               $query
      * @param string|array|\Pingu\Permissions\Contracts\Permission|\Illuminate\Support\Collection $permissions
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -36,28 +37,42 @@ trait HasPermissions
     {
         $permissions = $this->convertToPermissionModels($permissions);
 
-        $rolesWithPermissions = array_unique(array_reduce($permissions, function ($result, $permission) {
-            return array_merge($result, $permission->roles->all());
-        }, []));
+        $rolesWithPermissions = array_unique(
+            array_reduce(
+                $permissions, function ($result, $permission) {
+                    return array_merge($result, $permission->roles->all());
+                }, []
+            )
+        );
 
-        return $query->where(function ($query) use ($permissions, $rolesWithPermissions) {
-            $query->whereHas('permissions', function ($query) use ($permissions) {
-                $query->where(function ($query) use ($permissions) {
-                    foreach ($permissions as $permission) {
-                        $query->orWhere('permissions.id', $permission->id);
+        return $query->where(
+            function ($query) use ($permissions, $rolesWithPermissions) {
+                $query->whereHas(
+                    'permissions', function ($query) use ($permissions) {
+                        $query->where(
+                            function ($query) use ($permissions) {
+                                foreach ($permissions as $permission) {
+                                    $query->orWhere('permissions.id', $permission->id);
+                                }
+                            }
+                        );
                     }
-                });
-            });
-            if (count($rolesWithPermissions) > 0) {
-                $query->orWhereHas('roles', function ($query) use ($rolesWithPermissions) {
-                    $query->where(function ($query) use ($rolesWithPermissions) {
-                        foreach ($rolesWithPermissions as $role) {
-                            $query->orWhere('roles.id', $role->id);
+                );
+                if (count($rolesWithPermissions) > 0) {
+                    $query->orWhereHas(
+                        'roles', function ($query) use ($rolesWithPermissions) {
+                            $query->where(
+                                function ($query) use ($rolesWithPermissions) {
+                                    foreach ($rolesWithPermissions as $role) {
+                                        $query->orWhere('roles.id', $role->id);
+                                    }
+                                }
+                            );
                         }
-                    });
-                });
+                    );
+                }
             }
-        });
+        );
     }
 
     /**
@@ -73,33 +88,36 @@ trait HasPermissions
 
         $permissions = is_array($permissions) ? $permissions : [$permissions];
 
-        return array_map(function ($permission) {
-            if ($permission instanceof Permission) {
-                return $permission;
-            }
+        return array_map(
+            function ($permission) {
+                if ($permission instanceof Permission) {
+                    return $permission;
+                }
 
-            return Permissions::getByName($permission, $this->getDefaultGuardName());
-        }, $permissions);
+                return Permissions::getByName($permission, $this->getDefaultGuardName());
+            }, $permissions
+        );
     }
 
     /**
      * Determine if the model may perform the given permission.
      *
      * @param string|int|\Pingu\Permission\Contracts\Permission $permission
-     * @param string|null $guardName
+     * @param string|null                                       $guardName
      *
      * @return bool
      * @throws PermissionDoesNotExist
      */
     public function hasPermissionTo($permission, $guardName = null): bool
     {
-        if($this->id == 1) return true;
+        if($this->id == 1) { return true;
+        }
         
-        if(is_string($permission)){
+        if(is_string($permission)) {
             $permission = Permissions::getByName($permission, $guardName ?? $this->getDefaultGuardName());
         }
 
-        if(is_int($permission)){
+        if(is_int($permission)) {
             $permission = Permissions::getById($permission, $guardName ?? $this->getDefaultGuardName());
         }
 
@@ -110,7 +128,7 @@ trait HasPermissions
      * An alias to hasPermissionTo(), but avoids throwing an exception.
      *
      * @param string|int|\Pingu\Permissions\Contracts\Permission $permission
-     * @param string|null $guardName
+     * @param string|null                                        $guardName
      *
      * @return bool
      */
@@ -178,22 +196,29 @@ trait HasPermissions
      */
     public function givePermissionTo($permissions)
     {
-        if(!is_array($permissions)) $permissions = [$permissions];
+        if(!is_array($permissions)) { $permissions = [$permissions];
+        }
         $permissions = collect($permissions)
             ->flatten()
-            ->map(function ($permission) {
-                if (empty($permission)) {
-                    return false;
-                }
+            ->map(
+                function ($permission) {
+                    if (empty($permission)) {
+                        return false;
+                    }
 
-                return $this->getStoredPermission($permission);
-            })
-            ->filter(function ($permission) {
-                return $permission instanceof Permission;
-            })
-            ->each(function ($permission) {
-                $this->ensureModelSharesGuard($permission);
-            })
+                    return $this->getStoredPermission($permission);
+                }
+            )
+            ->filter(
+                function ($permission) {
+                    return $permission instanceof Permission;
+                }
+            )
+            ->each(
+                function ($permission) {
+                    $this->ensureModelSharesGuard($permission);
+                }
+            )
             ->map->id
             ->all();
 

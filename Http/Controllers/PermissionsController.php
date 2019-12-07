@@ -12,33 +12,36 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class PermissionsController extends BaseController
 {
- 	public function edit(Request $request)
- 	{	
- 		$roles = Role::where('id', '!=', 1)->get();
- 		return view('permissions::edit')->with([
- 			'permissions' => Permissions::getBySection(),
- 			'patchUri' => route_by_name('permissions.patch')->uri,
- 			'roles' => $roles
- 		]);
- 	}
+    public function edit(Request $request)
+    {    
+        $roles = Role::where('id', '!=', 1)->get();
+        return view('permissions::edit')->with(
+            [
+            'permissions' => Permissions::getBySection(),
+            'patchUri' => route_by_name('permissions.patch')->uri,
+            'roles' => $roles
+            ]
+        );
+    }
 
- 	public function patch(Request $request)
- 	{
- 		$post = $request->post();
- 		if(!isset($post['perms'])){
- 			throw new HttpException(422, "'perms' is missing in the post parameters");
- 		}
- 		$roles = Role::get();
- 		$perms = $post['perms'];
- 		foreach($roles as $role){
- 			if($role->id == 1) continue;
- 			$rolePerms = [];
- 			if(isset($perms[$role->id])){
- 				$rolePerms = array_keys($perms[$role->id]);
- 			}
- 			$role->syncPermissions(...$rolePerms);
- 		}
- 		Notify::success("Permissions have been updated");
- 		return back();
- 	}
+    public function patch(Request $request)
+    {
+        $post = $request->post();
+        if(!isset($post['perms'])) {
+            throw new HttpException(422, "'perms' is missing in the post parameters");
+        }
+        $roles = Role::get();
+        $perms = $post['perms'];
+        foreach($roles as $role){
+            if($role->id == 1) { continue;
+            }
+            $rolePerms = [];
+            if(isset($perms[$role->id])) {
+                $rolePerms = array_keys($perms[$role->id]);
+            }
+            $role->syncPermissions(...$rolePerms);
+        }
+        Notify::success("Permissions have been updated");
+        return back();
+    }
 }

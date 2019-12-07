@@ -8,7 +8,8 @@ class Guard
     /**
      * return collection of (guard) property if exist on class or object
      * otherwise will return collection of guards names that exists in config/auth.php.
-     * @param $model
+     *
+     * @param  $model
      * @return Collection
      */
     public static function getNames($model) : Collection
@@ -24,15 +25,19 @@ class Guard
             return collect($guardName);
         }
         return collect(config('auth.guards'))
-            ->map(function ($guard) {
-                if (! isset($guard['provider'])) {
-                    return;
+            ->map(
+                function ($guard) {
+                    if (! isset($guard['provider'])) {
+                        return;
+                    }
+                    return config("auth.providers.{$guard['provider']}.model");
                 }
-                return config("auth.providers.{$guard['provider']}.model");
-            })
-            ->filter(function ($model) use ($class) {
-                return $class === $model;
-            })
+            )
+            ->filter(
+                function ($model) use ($class) {
+                    return $class === $model;
+                }
+            )
             ->keys();
     }
     public static function getDefaultName($class): string

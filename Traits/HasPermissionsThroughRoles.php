@@ -10,24 +10,27 @@ trait HasPermissionsThroughRoles
 {
     /**
      * A model may have multiple direct permissions.
-     * @return  Illuminate\Database\Eloquent\Relations\HasMany
+     *
+     * @return Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function permissions()
     {  
-        return Cache::rememberForever(config('permissions.cache-key'), function() {
-            $out = collect();
-            foreach($this->roles as $role){
-                $out = $out->merge($role->permissions);
+        return Cache::rememberForever(
+            config('permissions.cache-key'), function () {
+                $out = collect();
+                foreach($this->roles as $role){
+                    $out = $out->merge($role->permissions);
+                }
+                return $out; 
             }
-            return $out; 
-        });
+        );
     }
 
     /**
      * Determine if the model may perform the given permission.
      *
      * @param string|int|\Pingu\Permission\Contracts\Permission $permission
-     * @param string|null $guardName
+     * @param string|null                                       $guardName
      *
      * @return bool
      * @throws PermissionDoesNotExist
@@ -35,7 +38,8 @@ trait HasPermissionsThroughRoles
     public function hasPermissionTo($permission, $guardName = null): bool
     {
         foreach($this->roles as $role){
-            if($role->hasPermissionTo($permission)) return true;
+            if($role->hasPermissionTo($permission)) { return true;
+            }
         }
         return false;
     }
@@ -44,7 +48,7 @@ trait HasPermissionsThroughRoles
      * An alias to hasPermissionTo(), but avoids throwing an exception.
      *
      * @param string|int|\Pingu\Permissions\Contracts\Permission $permission
-     * @param string|null $guardName
+     * @param string|null                                        $guardName
      *
      * @return bool
      */

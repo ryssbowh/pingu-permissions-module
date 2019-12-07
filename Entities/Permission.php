@@ -13,7 +13,8 @@ use Pingu\User\Entities\Role;
 use Pingu\User\Entities\User;
 
 class Permission extends BaseModel implements PermissionContract
-{   
+{
+   
     protected $fillable = ['name', 'guard', 'section'];
 
     protected $dispatchesEvents = [
@@ -34,7 +35,7 @@ class Permission extends BaseModel implements PermissionContract
     /**
      * Find a permission by its name (and optionally guardName).
      *
-     * @param string $name
+     * @param string      $name
      * @param string|null $guardName
      *
      * @return \Pingu\Permissions\Contracts\Permission
@@ -47,7 +48,7 @@ class Permission extends BaseModel implements PermissionContract
     /**
      * Find a permission by its id (and optionally guardName).
      *
-     * @param int $id
+     * @param int         $id
      * @param string|null $guardName
      *
      * @return \Pingu\Permissions\Contracts\Permission
@@ -76,7 +77,8 @@ class Permission extends BaseModel implements PermissionContract
 
     /**
      * Give default guard name
-     * @param array $attributes
+     *
+     * @param  array $attributes
      * @return bool
      */
     public function save(array $options = [])
@@ -87,12 +89,14 @@ class Permission extends BaseModel implements PermissionContract
 
     /**
      * Check if the given role has this permission
-     * @param  Role   $role
+     *
+     * @param  Role $role
      * @return bool
      */
     public function roleHasPermission(Role $role)
     {
-        if($role->id == 1) return true;
+        if($role->id == 1) { return true;
+        }
         return Permissions::roleHasPermission($role, $this);
     }
 

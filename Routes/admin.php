@@ -14,9 +14,9 @@ use Pingu\Permissions\Entities\Permission;
 */
 
 Route::get('permissions/edit', ['uses' => 'PermissionsController@edit'])
-	->name('permissions.admin.edit')
-	->middleware('can:edit permissions');
+    ->name('permissions.admin.edit')
+    ->middleware('can:edit permissions');
 
 Route::patch('permissions/edit', ['uses' => 'PermissionsController@patch'])
-	->name('permissions.patch')
-	->middleware('can:edit permissions');
+    ->name('permissions.patch')
+    ->middleware('can:edit permissions');
