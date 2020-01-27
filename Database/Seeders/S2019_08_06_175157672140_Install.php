@@ -18,8 +18,8 @@ class S2019_08_06_175157672140_Install extends MigratableSeeder
     {
         $edit = Permission::create(['name' => 'edit permissions', 'section' => 'Permissions', 'helper' => 'Warning : do not give this permissions to untrusted roles']);
         $view = Permission::create(['name' => 'view permissions', 'section' => 'Permissions']);
-        $admin = Role::find(4);
-        $admin->givePermissionTo([$view, $edit]);
+        $admin = Role::findByName('Admin');
+        $admin->givePermissionTo($view);
         $item = MenuItem::create(
             [
             'name' => 'Permissions',
