@@ -32,7 +32,7 @@ class Permissions
     {
         $model = \Auth::user();
         if (!$model) {
-            return config('user.guestRole');
+            return $this->guestRole();
         }
         return $model;
     }
@@ -52,7 +52,7 @@ class Permissions
      */
     public function guestRole()
     {
-        return config('user.guestRole');
+        return Role::find(config('user.guestRole'))->first();
     }
 
     /**
@@ -159,6 +159,7 @@ class Permissions
     /**
      * @param  Role       $role
      * @param  Permission $perm
+     * 
      * @return bool
      */
     public function roleHasPermission(Role $role, Permission $perm)

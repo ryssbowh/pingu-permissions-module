@@ -44,7 +44,7 @@ class PermissionsServiceProvider extends ModuleServiceProvider
          */
         \Gate::before(
             function ($user, $ability) {
-                if ($user->hasRole(1)) {
+                if ($user->hasRole('God')) {
                     return true;
                 }
             }
