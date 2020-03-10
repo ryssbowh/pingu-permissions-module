@@ -16,7 +16,7 @@ class PermissionsController extends BaseController
     public function edit(Request $request)
     {
         $roles = Role::where('id', '!=', 1)->get();
-        return view('permissions::edit')->with(
+        return view('pages.permissions.edit')->with(
             [
             'permissions' => Permissions::getBySection(),
             'patchUri' => route_by_name('permissions.patch')->uri,
