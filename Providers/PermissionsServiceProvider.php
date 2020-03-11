@@ -33,7 +33,7 @@ class PermissionsServiceProvider extends ModuleServiceProvider
     {
         $this->registerTranslations();
         $this->registerConfig();
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'permissions');
+        $this->loadModuleViewsFrom(__DIR__ . '/../Resources/views', 'permissions');
         $this->registerFactories();
         $this->registerCommands();
         $this->registerRouteMiddlewares($router);
