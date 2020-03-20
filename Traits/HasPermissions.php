@@ -110,7 +110,8 @@ trait HasPermissions
      */
     public function hasPermissionTo($permission, $guardName = null): bool
     {
-        if($this->id == 1) { return true;
+        if($this->id == 1) {
+            return true;
         }
         
         if(is_string($permission)) {

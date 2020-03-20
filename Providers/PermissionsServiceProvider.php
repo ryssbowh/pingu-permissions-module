@@ -38,17 +38,6 @@ class PermissionsServiceProvider extends ModuleServiceProvider
         $this->registerCommands();
         $this->registerRouteMiddlewares($router);
         $this->addBladeDirectives();
-
-        /**
-         * Grant all access to God role
-         */
-        \Gate::before(
-            function ($user, $ability) {
-                if ($user->hasRole('God')) {
-                    return true;
-                }
-            }
-        );
     }
 
     public function registerRouteMiddlewares(Router $kernel)
