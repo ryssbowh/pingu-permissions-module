@@ -28,7 +28,7 @@ class Permissions
      * 
      * @return User|Role
      */
-    public function getPermissionableModel()
+    public function getPermissionable()
     {
         $model = \Auth::user();
         if (!$model) {

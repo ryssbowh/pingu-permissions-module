@@ -21,7 +21,7 @@ class PermissionMiddleware
             ? $permission
             : explode('|', $permission);
 
-        $model = \Permissions::getPermissionableModel();
+        $model = \Permissions::getPermissionable();
 
         $permissions = array_map(
             function ($name) use ($model) {
