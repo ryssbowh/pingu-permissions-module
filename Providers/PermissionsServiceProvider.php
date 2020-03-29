@@ -64,7 +64,7 @@ class PermissionsServiceProvider extends ModuleServiceProvider
         \Blade::directive(
             'ifperm', function ($expression) {
 
-                $code = "<?php if(\Permissions::getPermissionableModel()->hasPermissionTo($expression)): ?>";
+                $code = "<?php if(\Permissions::getPermissionable()->hasPermissionTo($expression)): ?>";
 
                 return $code;
             }

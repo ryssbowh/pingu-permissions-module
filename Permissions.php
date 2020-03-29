@@ -40,7 +40,7 @@ class Permissions
     public function resolvePermissionable($permissionable)
     {
         if (is_null($permissionable)) {
-            return $this->getPermissionableModel();
+            return $this->getPermissionable();
         }
         return $permissionable;
     }

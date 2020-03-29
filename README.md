@@ -8,9 +8,9 @@ Roles have permissions through `HasPermissions` contract, Users have permissions
 
 Permissions are cached when using the `Permissions` facade, the cache is emptied when a permission is saved or deleted.
 
-To check permissions, retrieve first the model on which to check it with `Permissions::getPermissionableModel()` which will return a User or the guest Role.
+To check permissions, retrieve first the model on which to check it with `Permissions::getPermissionable()` which will return the current User or the guest Role.
 
-The user id 1 permission checking will always return true. this is registered on the gate in the service provider.
+The user id 1 permission checking will always return true.
 
 ## Middlewares
 
