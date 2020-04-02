@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Permissions, Notify;
 use Pingu\Core\Http\Controllers\BaseController;
+use Pingu\Core\Traits\RendersAdminViews;
 use Pingu\Permissions\Entities\Permission;
 use Pingu\Permissions\Events\PermissionCacheChanged;
 use Pingu\User\Entities\Role;
@@ -13,17 +14,18 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class PermissionsController extends BaseController
 {
+    use RendersAdminViews;
+
     public function edit(Request $request)
     {
         $roles = Role::where('id', '!=', 1)->get();
-        return view('pages.permissions.edit')->with(
-            [
+        $data = [
             'permissions' => Permissions::getBySection(),
             'patchUri' => route_by_name('permissions.patch')->uri,
             'roles' => $roles,
             'canEdit' => \Auth::user()->hasPermissionTo('edit permissions')
-            ]
-        );
+        ];
+        return $this->renderAdminView('pages.permissions.edit', 'edit-permissions', $data);
     }
 
     public function patch(Request $request)

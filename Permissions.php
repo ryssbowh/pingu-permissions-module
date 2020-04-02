@@ -5,6 +5,7 @@ namespace Pingu\Permissions;
 use Cache, Schema;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use Pingu\Content\Entities\ContentType;
 use Pingu\Permissions\Entities\Permission;
@@ -171,7 +172,12 @@ class Permissions
         return in_array($perm->id, $perms);
     }
 
-    public function all()
+    /**
+     * Get all permissions
+     *
+     * @return Collection
+     */
+    public function all(): Collection
     {
         return $this->resolveModelCache();
     }
