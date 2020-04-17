@@ -103,9 +103,9 @@ class Permissions
      * @throws PermissionDoesNotExist
      * @return Permission
      */
-    public function getByName(string $name, string $guard)
+    public function getByName(string $name)
     {
-        $perm = $this->getPermissions(['name' => $name, 'guard' => $guard])->first();
+        $perm = $this->getPermissions(['name' => $name])->first();
         if(!$perm) {
             throw PermissionDoesNotExist::name($name, $guard);
         }
