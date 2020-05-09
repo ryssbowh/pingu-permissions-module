@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Permissions, Notify;
 use Pingu\Core\Http\Controllers\BaseController;
-use Pingu\Core\Traits\RendersAdminViews;
+use Pingu\Core\Traits\Controllers\RendersAdminViews;
 use Pingu\Permissions\Entities\Permission;
 use Pingu\Permissions\Events\PermissionCacheChanged;
 use Pingu\User\Entities\Role;
